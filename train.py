@@ -29,7 +29,7 @@ hyp = {'giou': 3.54,  # giou loss gain
        'obj_pw': 1.0,  # obj BCELoss positive_weight
        'iou_t': 0.1,  # iou training threshold
        'lr0': 0.000479,  # initial learning rate (SGD=5E-3, Adam=5E-4)
-       'lrf': 0.00000279,  # final LambdaLR learning rate = lr0 * (10 ** lrf)
+       'lrf': 0.0000000279,  # final LambdaLR learning rate = lr0 * (10 ** lrf)
        'momentum': 0.937,  # SGD momentum
        'weight_decay': 0.000484,  # optimizer weight decay
        'fl_gamma': 0.5,  # focal loss gamma
@@ -62,10 +62,11 @@ def train():
     weights = opt.weights  # initial training weights
 
     # Initialize
-    init_seeds()
+    seed_num = np.random.randint(1,100)
+    init_seeds(seed_num)
     if opt.multi_scale:
         img_sz_min = round(img_size / 32 / 1.75)
-        img_sz_max = round(img_size / 32 * 1.25)
+        img_sz_max = round(img_size / 32 * 2.00)
         img_size = img_sz_max * 32  # initiate with maximum multi_scale size
         print('Using multi-scale %g - %g' % (img_sz_min * 32, img_size))
 
@@ -179,7 +180,7 @@ def train():
 
     # Dataset
     dataset = LoadImagesAndLabels(train_path, img_size, batch_size,
-                                  augment=False,
+                                  augment=True,
                                   hyp=hyp,  # augmentation hyperparameters
                                   rect=False,  # rectangular training
                                   cache_labels=True,
@@ -270,11 +271,11 @@ def train():
                     imgs = F.interpolate(imgs, size=ns, mode='bilinear', align_corners=False)
 
             # Plot images with bounding boxes
-            if ni == 0:
-                fname = 'train_batch%g.jpg' % i
+            if ni in [0,1,2]:
+                fname = 'Train_Images/'+ str(epoch) + '_train_batch_%g.jpg' % i
                 plot_images(imgs=imgs, targets=targets, paths=paths, fname=fname)
-                if tb_writer:
-                    tb_writer.add_image(fname, cv2.imread(fname)[:, :, ::-1], dataformats='HWC')
+               # if tb_writer:
+                   # tb_writer.add_image(fname, cv2.imread(fname)[:, :, ::-1], dataformats='HWC')
 
             # Run model
             pred = model(imgs)

@@ -919,7 +919,7 @@ def plot_images(imgs, targets, paths=None, fname='images.jpg'):
 
     fig = plt.figure(figsize=(10, 10))
     bs, _, h, w = imgs.shape  # batch size, _, height, width
-    bs = min(bs, 16)  # limit plot to 16 images
+    bs = min(bs, 2)  # limit plot to 16 images
     ns = np.ceil(bs ** 0.5)  # number of subplots
 
     for i in range(bs):
@@ -933,7 +933,7 @@ def plot_images(imgs, targets, paths=None, fname='images.jpg'):
             s = Path(paths[i]).name
             plt.title(s[:min(len(s), 40)], fontdict={'size': 8})  # limit to 40 characters
     fig.tight_layout()
-    fig.savefig(fname, dpi=200)
+    fig.savefig(fname, dpi=1200)
     plt.close()
 
 
